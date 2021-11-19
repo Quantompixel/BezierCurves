@@ -1,25 +1,26 @@
 // https://javascript.info/bezier-curve
 
-    let one = {
-        x: 0 + 500,
-        y: 0 + 300
-    };
-    let two = {
-        x: 50 + 500,
-        y: -30 + 300
-    };
-    let three = {
-        x: 0 + 500,
-        y: -100 + 300
-    };
-    let four = {
-        x: 70 + 500,
-        y: -150 + 300
-    };
-    let five = {
-        x: 200 + 500,
-        y: -80 + 300
-    };
+let one = {
+    x: 0 + 500,
+    y: 0 + 300
+};
+let two = {
+    x: 50 + 500,
+    y: -30 + 300
+};
+let three = {
+    x: 0 + 500,
+    y: -100 + 300
+};
+let four = {
+    x: 70 + 500,
+    y: -100 + 300
+};
+let five = {
+    x: 0 + 500,
+    y: -30 + 300
+};
+
 function setup() {
     console.log("loaded");
     createCanvas(innerWidth, innerHeight);
@@ -36,7 +37,6 @@ function setup() {
     // threePointBezier(points);
 
     animateBezier(new Array(one, two, three, four, five));
-
 }
 
 function animateBezier(points, t = 0) {
@@ -44,28 +44,26 @@ function animateBezier(points, t = 0) {
         return;
     }
     background(100, 0, 100)
-    drawCurvePoint(new Array(one,two,three,four,five), t)
+    drawCurvePoint(new Array(one, two, three, four, five), t)
 
     setTimeout(() => {
         requestAnimationFrame(() => {
-            animateBezier(points, t + 0.025);
+            animateBezier(points, t + 0.004);
         })
-    }, 300);
+    }, 30);
 }
 
 /**
- * 
+ * Draws one point in a bezier-curve.
  * @param {Array} points Array of points.
  * @param {int} t Relative number that tells where on line the points should be placed.
  * @returns 
  */
 function drawCurvePoint(points, t) {
     const color = generateRandomHSBColor();
-    console.log(points.length);
     fill(color.h, color.s, color.b);
 
     if (points.length <= 1) {
-        console.log("------");;
         return;
     }
 
@@ -86,10 +84,12 @@ function drawCurvePoint(points, t) {
         });
 
         ellipse(base.x - diff.x * t, base.y - diff.y * t, 4, 4);
-        // line(base.x + t * diff.x
     }
+
     stroke(color.h, color.s, color.b);
     linesBetweenPoints(points);
+
+    // recursion
     drawCurvePoint(newPoints, t);
 }
 
@@ -133,6 +133,10 @@ function threePointBezier(points) {
     }
 }
 
+/**
+ * Generates a random HSB-Color with 100% brightness and saturation.
+ * @returns 
+ */
 function generateRandomHSBColor() {
     return {
         h: Math.floor(Math.random() * 360),
