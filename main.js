@@ -1,33 +1,33 @@
 // https://javascript.info/bezier-curve
 
+    let one = {
+        x: 0 + 500,
+        y: 0 + 300
+    };
+    let two = {
+        x: 50 + 500,
+        y: -30 + 300
+    };
+    let three = {
+        x: 0 + 500,
+        y: -100 + 300
+    };
+    let four = {
+        x: 70 + 500,
+        y: -150 + 300
+    };
+    let five = {
+        x: 200 + 500,
+        y: -80 + 300
+    };
 function setup() {
     console.log("loaded");
     createCanvas(innerWidth, innerHeight);
     colorMode(HSB, 360, 100, 100);
 
-    const points = [];
-    points.push({
-        x: 0 + 500,
-        y: 0 + 300
-    });
-    points.push({
-        x: 50 + 500,
-        y: -30 + 300
-    });
-    points.push({
-        x: 0 + 500,
-        y: -100 + 300
-    });
-    points.push({
-        x: 70 + 500,
-        y: -150 + 300
-    });
-    points.push({
-        x: 200 + 500,
-        y: -80 + 300
-    });
 
-    points.forEach(point => {
+    punkte = new Array(one, two, three, four, five);
+    punkte.forEach(point => {
         fill(0, 100, 100);
 
         ellipse(point.x, point.y, 7, 7);
@@ -35,20 +35,22 @@ function setup() {
 
     // threePointBezier(points);
 
-    // animateBezier(points);
+    animateBezier(new Array(one, two, three, four, five));
+
 }
 
 function animateBezier(points, t = 0) {
     if (t > 1) {
         return;
     }
-    drawCurvePoint(points, t)
+    background(100, 0, 100)
+    drawCurvePoint(new Array(one,two,three,four,five), t)
 
     setTimeout(() => {
         requestAnimationFrame(() => {
-            animateBezier(points, t + 0.05);
+            animateBezier(points, t + 0.025);
         })
-    }, 500);
+    }, 300);
 }
 
 /**
@@ -58,16 +60,14 @@ function animateBezier(points, t = 0) {
  * @returns 
  */
 function drawCurvePoint(points, t) {
-    noStroke()
     const color = generateRandomHSBColor();
+    console.log(points.length);
     fill(color.h, color.s, color.b);
 
     if (points.length <= 1) {
-        console.log(points[0].x);
+        console.log("------");;
         return;
     }
-
-    //jjpoints = [];
 
     const newPoints = [];
     for (let i = 0; i < points.length - 1; i++) {
