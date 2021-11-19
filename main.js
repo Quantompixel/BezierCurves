@@ -33,9 +33,22 @@ function setup() {
         ellipse(point.x, point.y, 7, 7);
     });
 
-
-    drawCurvePoint(points, 0.75)
     // threePointBezier(points);
+
+    // animateBezier(points);
+}
+
+function animateBezier(points, t = 0) {
+    if (t > 1) {
+        return;
+    }
+    drawCurvePoint(points, t)
+
+    setTimeout(() => {
+        requestAnimationFrame(() => {
+            animateBezier(points, t + 0.05);
+        })
+    }, 500);
 }
 
 /**
@@ -49,13 +62,15 @@ function drawCurvePoint(points, t) {
     const color = generateRandomHSBColor();
     fill(color.h, color.s, color.b);
 
-    if (points.length <= 1) return;
+    if (points.length <= 1) {
+        console.log(points[0].x);
+        return;
+    }
 
     //jjpoints = [];
 
     const newPoints = [];
     for (let i = 0; i < points.length - 1; i++) {
-        console.log(i);
         const diff = {
             x: points[i].x - points[i + 1].x,
             y: points[i].y - points[i + 1].y
@@ -73,7 +88,7 @@ function drawCurvePoint(points, t) {
         ellipse(base.x - diff.x * t, base.y - diff.y * t, 4, 4);
         // line(base.x + t * diff.x
     }
-    stroke(color.h,color.s,color.b);
+    stroke(color.h, color.s, color.b);
     linesBetweenPoints(points);
     drawCurvePoint(newPoints, t);
 }
