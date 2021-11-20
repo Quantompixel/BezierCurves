@@ -48,9 +48,6 @@ function setup() {
  * @returns The one point that lies on the bezier curve at the position t.
  */
 function drawCurvePoint(pointArray, t) {
-    const color = generateRandomHSBColor();
-    fill(color.h, color.s, color.b);
-
     // Creates a clone of the parameter that is not referenced to the original one.
     let points = pointArray.slice(0);
 
@@ -73,12 +70,7 @@ function drawCurvePoint(pointArray, t) {
             x: base.x - diff.x * t,
             y: base.y - diff.y * t
         });
-
-        ellipse(base.x - diff.x * t, base.y - diff.y * t, 4, 4);
     }
-
-    stroke(color.h, color.s, color.b);
-    linesBetweenPoints(points);
 
     // recursion
     return drawCurvePoint(newPoints, t);
