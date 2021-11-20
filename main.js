@@ -1,42 +1,52 @@
 // https://javascript.info/bezier-curve
 
-let one = {
-    x: 0 + 500,
-    y: 0 + 300
-};
-let two = {
-    x: 50 + 500,
-    y: -30 + 300
-};
-let three = {
-    x: 0 + 500,
-    y: -100 + 300
-};
-let four = {
-    x: 70 + 500,
-    y: -100 + 300
-};
-let five = {
-    x: 0 + 500,
-    y: -30 + 300
-};
 
 function setup() {
     console.log("loaded");
     createCanvas(innerWidth, innerHeight);
     colorMode(HSB, 360, 100, 100);
 
+    let one = {
+        x: 0 + innerWidth/2,
+        y: 0 + 200
+    };
+    let two = {
+        x: 50 + innerWidth/2,
+        y: -30 + 200
+    };
+    let three = {
+        x: 0 + innerWidth/2,
+        y: -100 + 200
+    };
+    let four = {
+        x: 70 + innerWidth/2,
+        y: -100 + 200
+    };
+    let five = {
+        x: 0 + innerWidth/2,
+        y: -30 + 200
+    };
 
     punkte = new Array(one, two, three, four, five);
+
+    // threePointBezier(points);
+
+    // console.log(drawCurvePoint(punkte,0.5));
+
+    let smoothLinePoints = [];
+    for (let t = 0; t < 1; t+=0.05) {
+        smoothLinePoints.push(drawCurvePoint(punkte,t)[0]);
+    }
+
+
+    background(0, 0, 100)
+    linesBetweenPoints(smoothLinePoints);
+
     punkte.forEach(point => {
         fill(0, 100, 100);
 
         ellipse(point.x, point.y, 7, 7);
     });
-
-    // threePointBezier(points);
-
-    animateBezier(new Array(one, two, three, four, five));
 }
 
 function animateBezier(points, t = 0) {
@@ -44,11 +54,11 @@ function animateBezier(points, t = 0) {
         return;
     }
     background(100, 0, 100)
-    drawCurvePoint(new Array(one, two, three, four, five), t)
+    drawCurvePoint(points)
 
     setTimeout(() => {
         requestAnimationFrame(() => {
-            animateBezier(points, t + 0.004);
+            animateBezier(points, t + 0.005);
         })
     }, 30);
 }
@@ -59,12 +69,15 @@ function animateBezier(points, t = 0) {
  * @param {int} t Relative number that tells where on line the points should be placed.
  * @returns 
  */
-function drawCurvePoint(points, t) {
+function drawCurvePoint(pointArray, t) {
     const color = generateRandomHSBColor();
     fill(color.h, color.s, color.b);
 
+    // Creates a clone of the parameter that is not referenced to the original one.
+    let points = pointArray.slice(0);
+
     if (points.length <= 1) {
-        return;
+        return points;
     }
 
     const newPoints = [];
@@ -90,7 +103,8 @@ function drawCurvePoint(points, t) {
     linesBetweenPoints(points);
 
     // recursion
-    drawCurvePoint(newPoints, t);
+    return drawCurvePoint(newPoints, t);
+    // added return before the recursive statement
 }
 
 function linesBetweenPoints(points) {
