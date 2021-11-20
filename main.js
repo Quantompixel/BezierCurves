@@ -2,43 +2,63 @@
 
 function setup() {
     console.log("loaded");
+
     createCanvas(innerWidth, innerHeight);
     colorMode(HSB, 360, 100, 100);
 
-    let one = {
-        x: 0,
-        y: 100
-    };
-    let two = {
-        x: 50,
-        y: 100
-    };
-    let three = {
-        x: 50,
-        y: 0
-    };
-    let four = {
-        x: 100,
-        y: 0
-    };
+    const curve = new bezierCurve(6, generateRandomHSBColor());
+}
 
-    punkte = new Array(one, two, three, four);
+/**
+ * @constructor
+ * @param anchorPointCount Number of points that the bezier curve is constructed of. 
+ * @param color Color of the curve.
+ */
+class bezierCurve {
+    constructor(anchorPointCount, color) {
+        this.color = color;
+        this.pointArray = [];
 
-    let smoothLinePoints = [];
-    for (let t = 0; t <= 1; t+=0.01) {
-        smoothLinePoints.push(drawCurvePoint(punkte,t)[0]);
+        for (let i = 0; i < anchorPointCount; i++) {
+            let x = Math.floor(Math.random() * innerWidth);
+            let y = Math.floor(Math.random() * innerHeight);
+
+            this.pointArray.push(new anchorPoint(x, y, i))
+        }
+
+        this.draw()
     }
 
-    background(0, 0, 100)
-    linesBetweenPoints(smoothLinePoints);
+    draw() {
+        let smoothLinePoints = [];
+        for (let t = 0; t <= 1; t += 0.01) {
+            smoothLinePoints.push(drawCurvePoint(this.pointArray, t)[0]);
+        }
+        stroke(this.color.h, this.color.s, this.color.b);
+        linesBetweenPoints(smoothLinePoints);
+    }
+}
 
-    stroke(0);
-    strokeWeight(0.5);
-    punkte.forEach(point => {
+class anchorPoint {
+    constructor(x, y, num) {
+        this.x = x;
+        this.y = y;
+        this.num = num;
+
+        this.draw();
+    }
+
+    draw() {
+        stroke(0);
+        strokeWeight(0.5);
+
+        fill(0)
+        textSize(5);
+        textWidth(3);
+        text(this.num, this.x + 3, this.y + 3);
         fill(0, 100, 100);
-
-        ellipse(point.x, point.y, 3, 3);
-    });
+        ellipse(this.x, this.y, 3, 3);
+    }
 }
 
 /**
@@ -74,7 +94,7 @@ function drawCurvePoint(pointArray, t) {
 
     // recursion
     return drawCurvePoint(newPoints, t);
-    // added return before the recursive statement
+    // https://stackoverflow.com/questions/21178455/simple-function-returning-undefined-value
 }
 
 /**
