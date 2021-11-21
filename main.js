@@ -1,22 +1,55 @@
 // https://javascript.info/bezier-curve
 
+let curves = [];
+
 function setup() {
     console.log("loaded");
 
     createCanvas(innerWidth, innerHeight);
     colorMode(HSB, 360, 100, 100);
 
-    const curve = new bezierCurve(6, generateRandomHSBColor());
+    const curve = new bezierCurve(4, generateRandomHSBColor(), 0.005);
+}
+
+function draw() {
+    background(0, 0, 100);
+    curves.forEach(curve => {
+        curve.draw();
+    });
+}
+
+let selected = [];
+function mousePressed() {
+    curves[0].pointArray.forEach(point => {
+        if((mouseX >= point.x-1.5 && mouseX <= point.x+1.5) && (mouseY >= point.y-1.5 && mouseY <= point.y+1.5)){
+            selected.push(point);
+        }
+    });
+}
+
+function mouseDragged() {
+    selected.forEach(point => {
+        point.x = mouseX;
+        point.y = mouseY;
+
+        point.draw();
+    })
+}
+
+function mouseReleased() {
+    selected = [];
 }
 
 /**
  * @constructor
- * @param anchorPointCount Number of points that the bezier curve is constructed of. 
- * @param color Color of the curve.
+ * @param {Number} anchorPointCount Number of points that the bezier curve is constructed of. 
+ * @param {HSBObject} color Color of the curve.
+ * @param {Number} quality Sets the smoothness of the curve (from 1 -> bad quality to 0 -> high quality)
  */
 class bezierCurve {
-    constructor(anchorPointCount, color) {
+    constructor(anchorPointCount, color, quality) {
         this.color = color;
+        this.quality = quality;
         this.pointArray = [];
 
         for (let i = 0; i < anchorPointCount; i++) {
@@ -26,16 +59,22 @@ class bezierCurve {
             this.pointArray.push(new anchorPoint(x, y, i))
         }
 
+        curves.push(this);
+
         this.draw()
     }
 
     draw() {
         let smoothLinePoints = [];
-        for (let t = 0; t <= 1; t += 0.01) {
+        for (let t = 0; t <= 1; t += this.quality) {
             smoothLinePoints.push(drawCurvePoint(this.pointArray, t)[0]);
         }
         stroke(this.color.h, this.color.s, this.color.b);
         linesBetweenPoints(smoothLinePoints);
+
+        this.pointArray.forEach(point => {
+            point.draw();
+        });
     }
 }
 
