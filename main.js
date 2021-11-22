@@ -1,12 +1,14 @@
 // https://javascript.info/bezier-curve
 
 let curves = [];
+let selected = [];
 
 function setup() {
     console.log("loaded");
 
     createCanvas(innerWidth, innerHeight);
     colorMode(HSB, 360, 100, 100);
+    strokeWeight(4);
 
     const curve = new bezierCurve(4, generateRandomHSBColor(), 0.005);
 }
@@ -18,12 +20,14 @@ function draw() {
     });
 }
 
-let selected = [];
 function mousePressed() {
-    curves[0].pointArray.forEach(point => {
-        if((mouseX >= point.x-1.5 && mouseX <= point.x+1.5) && (mouseY >= point.y-1.5 && mouseY <= point.y+1.5)){
-            selected.push(point);
-        }
+    curves.forEach(curve => {
+        curve.pointArray.forEach(point => {
+            let collisionZone = point.size / 2;
+            if ((mouseX >= point.x - collisionZone && mouseX <= point.x + collisionZone) && (mouseY >= point.y - collisionZone && mouseY <= point.y + collisionZone)) {
+                selected.push(point);
+            }
+        });
     });
 }
 
@@ -56,7 +60,7 @@ class bezierCurve {
             let x = Math.floor(Math.random() * innerWidth);
             let y = Math.floor(Math.random() * innerHeight);
 
-            this.pointArray.push(new anchorPoint(x, y, i))
+            this.pointArray.push(new anchorPoint(x, y, i, this.color))
         }
 
         curves.push(this);
@@ -79,24 +83,24 @@ class bezierCurve {
 }
 
 class anchorPoint {
-    constructor(x, y, num) {
+    constructor(x, y, num, color) {
         this.x = x;
         this.y = y;
         this.num = num;
+        this.color = color;
+        this.size = innerWidth * 0.01;
 
         this.draw();
     }
 
     draw() {
         stroke(0);
-        strokeWeight(0.5);
 
-        fill(0)
-        textSize(5);
-        textWidth(3);
-        text(this.num, this.x + 3, this.y + 3);
-        fill(0, 100, 100);
-        ellipse(this.x, this.y, 3, 3);
+        fill(0,0,80);
+        textSize(this.size * 1.4);
+        text(this.num, this.x + this.size, this.y + this.size);
+        fill(this.color.h, this.color.s - 20, this.color.b - 10);
+        ellipse(this.x, this.y, this.size, this.size);
     }
 }
 
